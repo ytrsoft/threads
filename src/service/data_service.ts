@@ -1,13 +1,13 @@
 import { log } from 'crawlee'
 import _ from 'lodash'
 import { Menu } from '../entities/menu.js'
-import { Page } from '../entities/page.js'
 import { Item } from '../entities/item.js'
 import { Record } from '../entities/record.js'
 import sqlite from '../sqlite/index.js'
+import { Pages } from '../entities/page.js'
 
 const menuRepo = sqlite.getRepository(Menu)
-const pageRepo = sqlite.getRepository(Page)
+const PagesRepo = sqlite.getRepository(Pages)
 const itemRepo = sqlite.getRepository(Item)
 const recordRepo = sqlite.getRepository(Record)
 
@@ -26,37 +26,37 @@ export const saveMenus = async (menus: Menu[]) => {
 }
 
 export const saveMenu = async (menu: Menu) => {
-  if (menu.id) {
-    await menuRepo.save(menu)
-    log.info('[MENU]<UPDATE> ' + JSON.stringify(menu))
-  } else {
-    const menus: Menu[] = await menuRepo.find({
-      where: {
-        fid: menu.fid
-      }
-    })
-    if (_.isEmpty(menus)) {
-      await menuRepo.save(menu)
-      log.info('[MENU]<CREATE> ' + JSON.stringify(menu))
+  const menus: Menu[] = await menuRepo.find({
+    where: {
+      fid: menu.fid
     }
+  })
+  if (_.isEmpty(menus)) {
+    await menuRepo.save(menu)
+    log.info('[MENU]<CREATE> ' + JSON.stringify(menu))
   }
 }
 
-export const queryPages = async (): Promise<Page[]> => {
-  return await pageRepo.find({
+export const queryPages = async (): Promise<Pages[]> => {
+  return await PagesRepo.find({
     where: {
       visited: false
     }
   })
 }
 
-export const savePage = async (page: Page) => {
-  if (page.id) {
-    await pageRepo.save(page)
-  } else {
-    const pages: Page[] = await queryPages()
-    if (_.isEmpty(pages)) {
-      await pageRepo.save(page)
+export const savePages = async (pages: Pages) => {
+  const _pages: Pages[] = await PagesRepo.find({
+    where: {
+      fid: pages.fid
+    }
+  })
+  if (_.isEmpty(_pages)) {
+    const maxPages = pages.max as number
+    for (let i = 1; i <= maxPages; i++) {
+      pages.current = i
+      await PagesRepo.save(pages)
+      log.info('[PAGES]<CREATE> ' + JSON.stringify(pages))
     }
   }
 }

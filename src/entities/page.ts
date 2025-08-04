@@ -2,7 +2,7 @@ import { Entity, Column } from 'typeorm'
 import Base from './base.js'
 
 @Entity()
-export class Page extends Base {
+export class Pages extends Base {
   @Column({ type: 'varchar', length: 255, nullable: true })
   fid?: string
 
