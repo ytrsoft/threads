@@ -48,6 +48,7 @@ export const saveFlag = async (flag: Flag) => {
       flag.page = page
       await flagRepo.save(flag)
       log.info('[FLAG]<CREATE> ' + JSON.stringify(flag))
+      delete flag.id
     }
   }
 }

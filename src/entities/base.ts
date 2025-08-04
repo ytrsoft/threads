@@ -8,7 +8,7 @@ import {
 
 export default abstract class BaseEntity extends TypeOrmBaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id!: string
+  id?: string
 
   @CreateDateColumn({ type: 'datetime' })
   created!: Date
