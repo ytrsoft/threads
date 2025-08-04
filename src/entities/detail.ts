@@ -10,9 +10,6 @@ export class Detail extends Base {
   @Column({ type: 'varchar', length: 255, nullable: true })
   tid!: string
 
-  @Column({ type: 'int', nullable: true })
-  page!: number
-
   @Column({ type: 'varchar', length: 255 })
   name!: string
 

@@ -3,8 +3,8 @@ import _ from 'lodash'
 import { Menu } from '../entities/menu.js'
 import { Item } from '../entities/item.js'
 import { Detail } from '../entities/detail.js'
-import sqlite from '../sqlite/index.js'
 import { Flag } from '../entities/flag.js'
+import sqlite from '../sqlite/index.js'
 
 const menuRepo = sqlite.getRepository(Menu)
 const flagRepo = sqlite.getRepository(Flag)

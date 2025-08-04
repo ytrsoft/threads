@@ -19,18 +19,19 @@ const detailRoute = async(item: Item, page: Page): Promise<Detail> => {
     els => els.map(el => (el as HTMLImageElement).src)
   ).catch(() => [])
   const cells = await page.$$eval(
-    '.card-body tr',
+    '.card-body tbody tr',
     rows => {
       const data: string[]= []
       for (const row of rows) {
-        const cells = row.querySelectorAll('td')
-        cells.forEach((item) => {
+        const tds = row.querySelectorAll('td')
+        tds.forEach((item) => {
           data.push(item.textContent?.trim() || '')
         })
       }
       return data
     }
   ).catch(() => Array(8).fill(''))
+
   return {
     fid: item.fid,
     tid: item.tid,
@@ -62,7 +63,7 @@ export default async function() {
   const requests = items.map((item) => {
     return {
       userData: item,
-      url: `${BASE_URL}//thread-${item.tid}.htm`
+      url: `${BASE_URL}/thread-${item.tid}.htm`
     }
   })
 
