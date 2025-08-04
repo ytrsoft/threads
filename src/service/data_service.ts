@@ -2,22 +2,14 @@ import { log } from 'crawlee'
 import _ from 'lodash'
 import { Menu } from '../entities/menu.js'
 import { Item } from '../entities/item.js'
-import { Record } from '../entities/record.js'
+import { Detail } from '../entities/detail.js'
 import sqlite from '../sqlite/index.js'
-import { Pages } from '../entities/page.js'
+import { Flag } from '../entities/flag.js'
 
 const menuRepo = sqlite.getRepository(Menu)
-const PagesRepo = sqlite.getRepository(Pages)
+const flagRepo = sqlite.getRepository(Flag)
 const itemRepo = sqlite.getRepository(Item)
-const recordRepo = sqlite.getRepository(Record)
-
-export const queryMenus = async (): Promise<Menu[]> => {
-  return await menuRepo.find({
-    where: {
-      visited: false
-    }
-  })
-}
+const detailRepo = sqlite.getRepository(Detail)
 
 export const saveMenus = async (menus: Menu[]) => {
   for (let i = 0; i < menus.length; i++) {
@@ -37,27 +29,51 @@ export const saveMenu = async (menu: Menu) => {
   }
 }
 
-export const queryPages = async (): Promise<Pages[]> => {
-  return await PagesRepo.find({
+export const queryFlag = async (): Promise<Flag[]> => {
+  return await flagRepo.find({
     where: {
       visited: false
     }
   })
 }
 
-export const savePages = async (pages: Pages) => {
-  const _pages: Pages[] = await PagesRepo.find({
+export const saveFlag = async (flag: Flag) => {
+  const flags: Flag[] = await flagRepo.find({
     where: {
-      fid: pages.fid
+      fid: flag.fid
     }
   })
-  if (_.isEmpty(_pages)) {
-    const maxPages = pages.max as number
-    for (let i = 1; i <= maxPages; i++) {
-      pages.current = i
-      await PagesRepo.save(pages)
-      log.info('[PAGES]<CREATE> ' + JSON.stringify(pages))
+  if (_.isEmpty(flags)) {
+    for (let page = 1; page <= flag.pages; page++) {
+      flag.page = page
+      await flagRepo.save(flag)
+      log.info('[FLAG]<CREATE> ' + JSON.stringify(flag))
     }
+  }
+}
+
+export const vistedFlag = async (flag: Flag) => {
+  flag.visited = true
+  await flagRepo.save(flag)
+  log.info('[FLAG]<UPDATE> ' + JSON.stringify(flag))
+}
+
+export const saveItems = async (items: Item[], flag: Flag) => {
+  for (let i = 0; i < items.length; i++) {
+    await saveItem(items[i])
+  }
+  await vistedFlag(flag)
+}
+
+export const saveItem = async (item: Item) => {
+ const _items: Item[] = await itemRepo.find({
+    where: {
+      tid: item.tid
+    }
+  })
+  if (_.isEmpty(_items)) {
+    await itemRepo.save(item)
+    log.info('[ITEM]<CREATE> ' + JSON.stringify(item))
   }
 }
 
@@ -69,33 +85,22 @@ export const queryItems = async (): Promise<Item[]> => {
   })
 }
 
-export const saveItem = async (item: Item) => {
-  if (item.id) {
-    await itemRepo.save(item)
-  } else {
-    const items: Item[] = await queryItems()
-    if (_.isEmpty(items)) {
-      await itemRepo.save(item)
-    }
-  }
+export const vistedItem = async (item: Item) => {
+  item.visited = true
+  await itemRepo.save(item)
+  log.info('[Item]<UPDATE> ' + JSON.stringify(item))
 }
 
-export const queryRecords = async (): Promise<Record[]> => {
-  return await recordRepo.find({
+export const saveDetail = async (detail: Detail, item: Item) => {
+  const details: Detail[] = await detailRepo.find({
     where: {
-      visited: false
+      fid: detail.fid,
+      tid: detail.tid
     }
   })
-}
-
-export const saveRecord = async (record: Record) => {
-  if (record.id) {
-    await recordRepo.save(record)
-  } else {
-    const records: Record[] = await queryRecords()
-    if (_.isEmpty(records)) {
-      await recordRepo.save(record)
-    }
+  if (_.isEmpty(details)) {
+    await detailRepo.save(detail)
+    log.info('[DETAIL]<CREATE> ' + JSON.stringify(detail))
+    vistedItem(item)
   }
 }
-

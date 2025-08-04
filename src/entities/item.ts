@@ -4,8 +4,8 @@ import Base from './base.js'
 @Entity()
 export class Item extends Base {
   @Column({ type: 'varchar', length: 255, nullable: true })
-  fid?: string
+  fid!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  tid?: string
+  tid!: string
 }

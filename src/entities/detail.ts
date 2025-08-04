@@ -2,34 +2,47 @@ import { Entity, Column } from 'typeorm'
 import Base from './base.js'
 
 @Entity()
-export class Record extends Base {
+export class Detail extends Base {
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  fid!: string
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  tid!: string
+
+  @Column({ type: 'int', nullable: true })
+  page!: number
+
   @Column({ type: 'varchar', length: 255 })
-  name?: string
+  name!: string
 
   @Column('text', { nullable: true })
-  desc?: string
+  desc!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  region?: string
+  region!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  age?: string
+  age!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  beauty?: string
+  beauty!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  price?: string
+  price!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  service?: string
+  service!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  wechat?: string
+  wechat!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  qq?: string
+  qq!: string
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  phone?: string
+  phone!: string
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  imgs!: string
 }

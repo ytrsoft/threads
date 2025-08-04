@@ -1,9 +1,9 @@
 import { Page } from 'playwright'
 import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL, TAG_MENU, TAG_MAX } from '../utils/index.js'
-import { saveMenus, savePages } from '../service/data_service.js'
+import { saveMenus, saveFlag } from '../service/data_service.js'
 import { Menu } from '../entities/menu.js'
-import { Pages } from '../entities/page.js'
+import { Flag } from '../entities/flag.js'
 
 const menuRoute = async(page: Page): Promise<Menu[]> => {
   return await page.$$eval('.forumList li', (list) => {
@@ -57,10 +57,10 @@ export default async function() {
         )
       }
       if (request.label === TAG_MAX) {
-        const max = await maxRoute(page)
-        if (max != -1) {
+        const pages = await maxRoute(page)
+        if (pages != -1) {
           const fid = request.userData.fid
-          await savePages({ fid, max } as Pages)
+          await saveFlag({ fid, pages } as Flag)
         }
       }
     }

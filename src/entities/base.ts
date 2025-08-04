@@ -8,14 +8,14 @@ import {
 
 export default abstract class BaseEntity extends TypeOrmBaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id?: string
+  id!: string
 
   @CreateDateColumn({ type: 'datetime' })
-  created?: Date
+  created!: Date
 
   @UpdateDateColumn({ type: 'datetime' })
-  updated?: Date
+  updated!: Date
 
   @Column({ type: 'boolean', default: false })
-  visited?: boolean
+  visited!: boolean
 }
