@@ -16,6 +16,6 @@ export default abstract class BaseEntity extends TypeOrmBaseEntity {
   @UpdateDateColumn({ type: 'datetime' })
   updated?: Date
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   visited?: boolean
 }

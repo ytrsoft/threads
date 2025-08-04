@@ -3,12 +3,12 @@ import Base from './base.js'
 
 @Entity()
 export class Page extends Base {
-  @Column()
+  @Column({ type: 'varchar', length: 255, nullable: true })
   fid?: string
 
-  @Column('int')
+  @Column({ type: 'int', nullable: true })
   current?: number
 
-  @Column('int')
+  @Column({ type: 'int', nullable: true })
   max?: number
 }

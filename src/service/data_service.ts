@@ -1,3 +1,4 @@
+import { log } from 'crawlee'
 import _ from 'lodash'
 import { Menu } from '../entities/menu.js'
 import { Page } from '../entities/page.js'
@@ -18,13 +19,25 @@ export const queryMenus = async (): Promise<Menu[]> => {
   })
 }
 
+export const saveMenus = async (menus: Menu[]) => {
+  for (let i = 0; i < menus.length; i++) {
+    await saveMenu(menus[i])
+  }
+}
+
 export const saveMenu = async (menu: Menu) => {
   if (menu.id) {
     await menuRepo.save(menu)
+    log.info('[MENU]<UPDATE> ' + JSON.stringify(menu))
   } else {
-    const menus: Menu[] = await queryMenus()
-    if (!_.isEmpty(menus)) {
+    const menus: Menu[] = await menuRepo.find({
+      where: {
+        fid: menu.fid
+      }
+    })
+    if (_.isEmpty(menus)) {
       await menuRepo.save(menu)
+      log.info('[MENU]<CREATE> ' + JSON.stringify(menu))
     }
   }
 }
@@ -42,7 +55,7 @@ export const savePage = async (page: Page) => {
     await pageRepo.save(page)
   } else {
     const pages: Page[] = await queryPages()
-    if (!_.isEmpty(pages)) {
+    if (_.isEmpty(pages)) {
       await pageRepo.save(page)
     }
   }
@@ -61,7 +74,7 @@ export const saveItem = async (item: Item) => {
     await itemRepo.save(item)
   } else {
     const items: Item[] = await queryItems()
-    if (!_.isEmpty(items)) {
+    if (_.isEmpty(items)) {
       await itemRepo.save(item)
     }
   }
@@ -80,7 +93,7 @@ export const saveRecord = async (record: Record) => {
     await recordRepo.save(record)
   } else {
     const records: Record[] = await queryRecords()
-    if (!_.isEmpty(records)) {
+    if (_.isEmpty(records)) {
       await recordRepo.save(record)
     }
   }

@@ -1,6 +1,7 @@
 {
 	"extends": "@apify/tsconfig",
 	"compilerOptions": {
+    "emitDecoratorMetadata": true,
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"target": "ES2022",
