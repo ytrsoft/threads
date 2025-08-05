@@ -52,7 +52,7 @@ const detailRoute = async(item: Item, page: Page): Promise<Detail> => {
 export default async function() {
   const inst = new PlaywrightCrawler({
     async requestHandler({ request, page }) {
-      const item = request.userData as Item
+      const item = request.userData.item as Item
       const detail = await detailRoute(item, page)
       await saveDetail(detail, item)
     }
@@ -62,7 +62,9 @@ export default async function() {
 
   const requests = items.map((item) => {
     return {
-      userData: item,
+      userData: {
+        item
+      },
       url: `${BASE_URL}/thread-${item.tid}.htm`
     }
   })
