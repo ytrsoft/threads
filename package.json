@@ -5,6 +5,10 @@
     "description": "This is an example of a Crawlee project.",
     "dependencies": {
         "crawlee": "^3.0.0",
+        "koa": "^3.0.1",
+        "koa-body": "^6.0.1",
+        "koa-router": "^14.0.0",
+        "koa-static": "^5.0.0",
         "lodash": "^4.17.21",
         "playwright": "*",
         "reflect-metadata": "^0.2.2",
@@ -13,6 +17,9 @@
     },
     "devDependencies": {
         "@apify/tsconfig": "^0.1.0",
+        "@types/koa": "^3.0.0",
+        "@types/koa-router": "^7.4.8",
+        "@types/koa-static": "^4.0.4",
         "@types/lodash": "^4.17.20",
         "@types/node": "^22.0.0",
         "tsx": "^4.4.0",
@@ -22,6 +29,7 @@
         "start": "npm run start:dev",
         "start:prod": "node dist/main.js",
         "start:dev": "tsx src/main.ts",
+        "start:serve": "tsx src/serve.ts",
         "build": "tsc",
         "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
         "postinstall": "npx crawlee install-playwright-browsers"

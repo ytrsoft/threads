@@ -1,5 +1,5 @@
 
 import 'reflect-metadata'
-import runCrawler from './crawlers/menu.js'
+import runCrawler from './crawlers/detail.js'
 
 runCrawler().then()
