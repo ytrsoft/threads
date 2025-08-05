@@ -16,6 +16,17 @@ router.get('/item/rate', async (ctx) => {
   ctx.body = { progress: rate }
 })
 
+router.get('/item/dist', async (ctx) => {
+  const result = await sqlite.query(`
+      SELECT menu.label, menu.fid, COUNT(detail.fid) AS total
+        FROM detail
+          JOIN menu ON detail.fid = menu.fid
+              GROUP BY menu.label
+      ORDER BY total DESC
+  `)
+  ctx.body = result
+})
+
 router.get('/item/result', async (ctx) => {
   ctx.type = 'html'
   ctx.body = `
@@ -26,25 +37,73 @@ router.get('/item/result', async (ctx) => {
     <title>抓取进度</title>
     <style>
       html, body {
-        margin: 0; height: 100%;
-        display: flex; justify-content: center; align-items: center;
-        background: #111; color: #fff;
-        font-family: sans-serif;
+        margin: 0;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #121212;
+        font-family: 'Arial', sans-serif;
+        color: #fff;
+      }
+      .container {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        max-width: 1000px;
+        align-items: center;
+        padding: 20px;
+        gap: 40px;
+      }
+      .progress-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .dist-container {
+        flex: 1;
+        max-width: 320px;
+        padding: 20px;
+        background: #222;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
       }
       canvas {
         border-radius: 50%;
-        background: #222;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+      .dist-item {
+        margin-bottom: 15px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #ddd;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #333;
+        padding-bottom: 10px;
+      }
+      .dist-item span {
+        color: #4caf50;
       }
     </style>
   </head>
   <body>
-    <canvas id="waterBall" width="300" height="300"></canvas>
+    <div class="container">
+      <div class="progress-container">
+        <canvas id="waterBall" width="300" height="300"></canvas>
+      </div>
+      <div class="dist-container">
+        <div id="distData"></div>
+      </div>
+    </div>
     <script>
       const canvas = document.getElementById('waterBall')
       const ctx = canvas.getContext('2d')
       const radius = 150
       let percent = 0
       let waveOffset = 0
+      let distData = []
 
       function drawWaterBall(p) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -76,12 +135,6 @@ router.get('/item/result', async (ctx) => {
         ctx.fillText(p + '%', radius, radius)
       }
 
-      function animate() {
-        waveOffset += 2
-        drawWaterBall(percent)
-        requestAnimationFrame(animate)
-      }
-
       async function fetchProgress() {
         try {
           const res = await fetch('/item/rate')
@@ -92,13 +145,46 @@ router.get('/item/result', async (ctx) => {
         }
       }
 
-      setInterval(fetchProgress, 1000)
+      async function fetchDistData() {
+        try {
+          const res = await fetch('/item/dist')
+          distData = await res.json()
+          updateDistData()
+        } catch (err) {
+          console.error('请求失败', err)
+        }
+      }
+
+      function updateDistData() {
+        const distContainer = document.getElementById('distData')
+        distContainer.innerHTML = ''
+        distData.forEach(item => {
+          const div = document.createElement('div')
+          div.classList.add('dist-item')
+          div.innerHTML = '<span>' + item.label + '</span> ' + item.total
+          distContainer.appendChild(div)
+        })
+      }
+
+      function animate() {
+        waveOffset += 2
+        drawWaterBall(percent)
+        requestAnimationFrame(animate)
+      }
+
+      setInterval(() => {
+        fetchProgress()
+        fetchDistData()
+      }, 1000)
+
       fetchProgress()
+      fetchDistData()
       animate()
     </script>
   </body>
   </html>
   `
 })
+
 
 export default router

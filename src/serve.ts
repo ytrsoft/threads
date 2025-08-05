@@ -2,7 +2,7 @@ import Koa from 'koa'
 import route from './rest/item.js'
 
 const app = new Koa()
-const PORT = 8080
+const PORT = 8877
 
 app.use(route.routes()).use(route.allowedMethods())
 
