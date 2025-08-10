@@ -1,4 +1,5 @@
 import sys
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from sqlite import Post, Category, Image, get_db, init_db
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -67,7 +68,19 @@ class CategoryMenu(QListWidget):
 
     def load_categories(self):
         db: Session = next(get_db())
-        categories = db.query(Category).all()
+        categories = db.query(
+            Category.id,
+            Category.title,
+            func.count(Post.id).label('value')
+        ).join(
+            Post, Category.id == Post.mid
+        ).group_by(
+            Category.id, Category.title
+        ).having(
+            func.count(Post.id) > 0
+        ).order_by(
+            func.count(Post.id).desc()
+        ).all()
 
         all_item = QListWidgetItem(QIcon.fromTheme("view-list"), "全部")
         all_item.setData(Qt.ItemDataRole.UserRole, "")
@@ -662,6 +675,7 @@ class MainWindow(QMainWindow):
         query = db.query(Post)
 
         if self.current_category:
+            print(self.current_category)
             query = query.filter(Post.mid == self.current_category)
 
         if self.search_keyword:
