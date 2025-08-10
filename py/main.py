@@ -675,7 +675,6 @@ class MainWindow(QMainWindow):
         query = db.query(Post)
 
         if self.current_category:
-            print(self.current_category)
             query = query.filter(Post.mid == self.current_category)
 
         if self.search_keyword:
