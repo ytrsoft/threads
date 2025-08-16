@@ -50,9 +50,10 @@ class TitleButton(QPushButton):
 class QtWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.top_widget = None
-        self.main_widget = None
-        self.title = None
+        self.top_widget = QWidget()
+        self.main_widget = QWidget()
+        self.title = QLabel('')
+        self.main_layout = None
         self.moving = False
         self.offset = QPoint()
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Window)
@@ -68,7 +69,6 @@ class QtWindow(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        self.top_widget = QWidget()
         self.top_widget.setFixedHeight(48)
         self.top_widget.setStyleSheet(
             'background-color: #2B2D30; border-top-left-radius: 8px; border-top-right-radius: 8px;'
@@ -78,7 +78,6 @@ class QtWindow(QWidget):
         top_layout.setContentsMargins(12, 0, 12, 0)
 
         logo = create_logo()
-        self.title = QLabel('')
         self.title.setStyleSheet('color: #B7B9BF;')
         self.title.setFont(QFont('', 10, QFont.Weight.Bold))
         min_btn = TitleButton('min', self.showMinimized)
@@ -96,13 +95,14 @@ class QtWindow(QWidget):
         top_layout.addWidget(close_btn)
         self.top_widget.setLayout(top_layout)
 
-        self.main_widget = QWidget()
         self.main_widget.setStyleSheet(
             'background-color: #1E1F22; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;'
         )
 
         layout.addWidget(self.top_widget)
         layout.addWidget(self.main_widget, 1)
+
+        self.main_layout = QVBoxLayout(self.main_widget)
 
     def set_title(self, text):
         self.title.setText(text)

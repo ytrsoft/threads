@@ -22,8 +22,7 @@ class MainWindow(QtWindow):
             }
         """)
         btn.clicked.connect(self.open_new_window)
-        main_layout = QVBoxLayout(self.main_widget)
-        main_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def open_new_window(self):
         self.new_window = SubWindow(self)
