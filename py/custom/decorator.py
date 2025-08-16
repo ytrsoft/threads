@@ -78,8 +78,7 @@ class QtWindow(QWidget):
         top_layout.setContentsMargins(12, 0, 12, 0)
 
         logo = create_logo()
-        self.title.setStyleSheet('color: #B7B9BF;')
-        self.title.setFont(QFont('', 10, QFont.Weight.Bold))
+        self.title.setStyleSheet('color: #B7B9BF; font-weight: bold')
         min_btn = TitleButton('min', self.showMinimized)
         max_btn = TitleButton('max', self.toggle_max_restore)
         close_btn = TitleButton('close', self.close)
