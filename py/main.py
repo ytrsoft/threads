@@ -13,7 +13,7 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 init_db()
 
 class AnimatedButton(QPushButton):
-    def __init__(self, text="", parent=None):
+    def __init__(self, text='', parent=None):
         super().__init__(text, parent)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self._animation = QPropertyAnimation(self, b"geometry")
