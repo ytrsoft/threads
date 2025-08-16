@@ -22,28 +22,6 @@ class QtIcon:
 
         return QIcon(colored_pixmap)
 
-class AnimatedButton(QPushButton):
-    def __init__(self, text='', parent=None):
-        super().__init__(text, parent)
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self._animation = QPropertyAnimation(self, b'')
-        self._animation.setDuration(150)
-        self._animation.setEasingCurve(QEasingCurve.Type.OutQuad)
-
-    def mousePressEvent(self, event):
-        self._animation.stop()
-        self._animation.setStartValue(self.geometry())
-        self._animation.setEndValue(self.geometry().adjusted(2, 2, -2, -2))
-        self._animation.start()
-        super().mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        self._animation.stop()
-        self._animation.setStartValue(self.geometry())
-        self._animation.setEndValue(self.geometry().adjusted(-2, -2, 2, 2))
-        self._animation.start()
-        super().mouseReleaseEvent(event)
-
 class CategoryMenu(QListWidget):
     category_selected = pyqtSignal(str)
 
