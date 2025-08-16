@@ -102,7 +102,8 @@ class QtWindow(QWidget):
         layout.addWidget(self.top_widget)
         layout.addWidget(self.main_widget, 1)
 
-        self.main_layout = QVBoxLayout(self.main_widget)
+        self.main_layout = QHBoxLayout(self.main_widget)
+        self.main_layout.setContentsMargins(12, 0, 12, 0)
 
     def set_title(self, text):
         self.title.setText(text)

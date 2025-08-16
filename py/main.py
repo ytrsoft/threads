@@ -82,7 +82,7 @@ class CategoryMenu(QListWidget):
             func.count(Post.id).desc()
         ).all()
 
-        all_item = QListWidgetItem(QIcon.fromTheme("view-list"), "全部")
+        all_item = QListWidgetItem(QIcon.fromTheme("folder"), "全部")
         all_item.setData(Qt.ItemDataRole.UserRole, "")
         self.addItem(all_item)
 
@@ -93,7 +93,7 @@ class CategoryMenu(QListWidget):
 
         self.currentItemChanged.connect(self.on_category_changed)
 
-    def on_category_changed(self, current, previous):
+    def on_category_changed(self, current):
         if current:
             self.category_selected.emit(current.data(Qt.ItemDataRole.UserRole))
 
