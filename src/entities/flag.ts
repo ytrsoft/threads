@@ -1,7 +1,5 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm'
+import { Entity, Column } from 'typeorm'
 import BaseEntity from './base.js'
-import { Category } from './category.js'
-import { Post } from './post.js'
 
 /**
  * 详情标记表
