@@ -1,16 +1,19 @@
 import { Page } from 'playwright'
 import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL } from '../utils/index.js'
-import { queryFlag, saveItems } from '../service/data_service.js'
-import { Item } from '../entities/item.js'
+import { PageService } from '../service/page_service.js'
+import { FlagService } from '../service/flag_service.js'
 import { Flag } from '../entities/flag.js'
 
-const itemRoute = async(fid: string, page: Page): Promise<Item[]> => {
+const pageService = new PageService()
+const flagService = new FlagService()
+
+const itemRoute = async(cid: string, page: Page): Promise<Partial<Flag>[]> => {
   return await page.$$eval('.list-unstyled.threadlist li', (list) => {
-    const items: Item[] = []
+    const items: Partial<Flag>[] = []
     list.forEach((li) => {
-      const tid = li.getAttribute('data-tid') as string
-      items.push({ tid, fid } as Item)
+      const pid = li.getAttribute('data-tid') as string
+      items.push({ cid, pid })
     })
     return items
   })
@@ -19,22 +22,25 @@ const itemRoute = async(fid: string, page: Page): Promise<Item[]> => {
 export default async function() {
   const inst = new PlaywrightCrawler({
     async requestHandler({ request, page }) {
-      const flag = request.userData.flag as Flag
-      const items = await itemRoute(
-        flag.fid as string, page
+      const entity = request.userData.entity
+      const flags = await itemRoute(
+        entity.page.cid, page
       )
-      await saveItems(items, flag)
+      flagService.save(flags)
+      pageService.visited(entity.page)
     }
   })
 
-  const flags = await queryFlag()
+  const pages = await pageService.query()
 
-  const requests = flags.map((flag) => {
+  const requests = pages.map((page) => {
     return {
       userData: {
-        flag
+        entity: {
+          page
+        }
       },
-      url: `${BASE_URL}/forum-${flag.fid}-${flag.page}.htm?orderby=lastpid&digest=0`
+      url: `${BASE_URL}/forum-${page.cid}-${page.page}.htm?orderby=lastpid&digest=0`
     }
   })
 

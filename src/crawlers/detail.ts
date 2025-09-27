@@ -1,12 +1,19 @@
 import { Page } from 'playwright'
 import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL } from '../utils/index.js'
-import { queryItems, saveDetail } from '../service/data_service.js'
-import { Item } from '../entities/item.js'
-import { Detail } from '../entities/detail.js'
 
-const detailRoute = async(item: Item, page: Page): Promise<Detail> => {
-  const name = await page.$eval(
+import { PostService } from '../service/post_service.js'
+import { FlagService } from '../service/flag_service.js'
+import { ImageService } from '../service/image_service.js'
+import { Flag } from '../entities/flag.js'
+import { Post } from '../entities/post.js'
+
+const postService = new PostService()
+const flagService = new FlagService()
+const imageService = new ImageService()
+
+const detailRoute = async(flag: Flag, page: Page): Promise<any> => {
+  const title = await page.$eval(
     '.card-thread .media-body h4',
     el => el.textContent?.trim() || ''
   ).catch(() => '')
@@ -31,41 +38,52 @@ const detailRoute = async(item: Item, page: Page): Promise<Detail> => {
       return data
     }
   ).catch(() => Array(8).fill(''))
-
-  return {
-    fid: item.fid,
-    tid: item.tid,
-    name,
+  const images = imgs.map((src, index) => {
+    return {
+      id: String(index + 1),
+      src,
+      pid: flag.pid
+    }
+  })
+  const post = {
+    title,
     desc,
-    imgs: JSON.stringify(imgs),
+    id: flag.pid,
+    cid: flag.cid,
     region: cells[0],
     age: cells[1],
-    beauty: cells[2],
+    score: cells[2],
     price: cells[3],
     service: cells[4],
     wechat: cells[5],
     qq: cells[6],
     phone: cells[7]
-  } as Detail
+  }
+  return { images, post }
 }
 
 export default async function() {
   const inst = new PlaywrightCrawler({
     async requestHandler({ request, page }) {
-      const item = request.userData.item as Item
-      const detail = await detailRoute(item, page)
-      await saveDetail(detail, item)
+      const entity = request.userData.entity
+      const { images, post } = await detailRoute(
+        entity.flag, page
+      )
+      postService.save(post as Post)
+      imageService.save(images)
     }
   })
 
-  const items = await queryItems()
+  const flags = await flagService.query()
 
-  const requests = items.map((item) => {
+  const requests = flags.map((flag) => {
     return {
       userData: {
-        item
+        entity: {
+          flag
+        }
       },
-      url: `${BASE_URL}/thread-${item.tid}.htm`
+      url: `${BASE_URL}/thread-${flag.pid}.htm`
     }
   })
 

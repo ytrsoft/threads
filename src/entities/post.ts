@@ -1,45 +1,52 @@
 import { Entity, Column } from 'typeorm'
-import Base from './base.js'
+import BaseEntity from './base.js'
 
-@Entity()
-export class Detail extends Base {
-
+/**
+ * 帖子表
+ */
+@Entity('post')
+export class Post extends BaseEntity {
+  // 标题
   @Column({ type: 'varchar', length: 255, nullable: true })
-  fid!: string
+  title?: string
 
+  // 描述
+  @Column({ type: 'text', nullable: true })
+  desc?: string
+
+  // 地区
   @Column({ type: 'varchar', length: 255, nullable: true })
-  tid!: string
+  region?: string
 
-  @Column({ type: 'varchar', length: 255 })
-  name!: string
-
-  @Column('text', { nullable: true })
-  desc!: string
-
+  // 年龄
   @Column({ type: 'varchar', length: 255, nullable: true })
-  region!: string
+  age?: number
 
+  // 评分
   @Column({ type: 'varchar', length: 255, nullable: true })
-  age!: string
+  score?: number
 
+  // 价格
   @Column({ type: 'varchar', length: 255, nullable: true })
-  beauty!: string
+  price?: number
 
+  // 服务
   @Column({ type: 'varchar', length: 255, nullable: true })
-  price!: string
+  service?: string
 
+  // 微信号码
   @Column({ type: 'varchar', length: 255, nullable: true })
-  service!: string
+  wechat?: string
 
+  // QQ号码
   @Column({ type: 'varchar', length: 255, nullable: true })
-  wechat!: string
+  qq?: string
 
+  // 电话号码
   @Column({ type: 'varchar', length: 255, nullable: true })
-  qq!: string
+  phone?: string
 
+  // 菜单id
   @Column({ type: 'varchar', length: 255, nullable: true })
-  phone!: string
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  imgs!: string
+  cid?: string
 }

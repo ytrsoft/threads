@@ -1,21 +1,24 @@
 import { Page } from 'playwright'
 import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL, TAG_MENU, TAG_MAX } from '../utils/index.js'
-import { saveMenus, saveFlag } from '../service/data_service.js'
-import { Menu } from '../entities/menu.js'
-import { Flag } from '../entities/flag.js'
+import { CategoryService } from '../service/category_service.js'
+import { PageService } from '../service/page_service.js'
+import { Category } from '../entities/category.js'
 
-const menuRoute = async(page: Page): Promise<Menu[]> => {
+const categoryService = new CategoryService()
+const pageService = new PageService()
+
+const categoryRoute = async(page: Page): Promise<Partial<Category>[]> => {
   return await page.$$eval('.forumList li', (list) => {
-    const items: Menu[] = []
+    const categories: Partial<Category>[] = []
     list.forEach((li) => {
-      const label = li.textContent.replace(/\s+/g, '')
-      const fid = li.getAttribute('fid') as string
-      if (!['47', '48'].includes(fid)) {
-        items.push({label, fid} as Menu)
+      const title = li.textContent.replace(/\s+/g, '')
+      const id = li.getAttribute('fid') as string
+      if (!['47', '48'].includes(id)) {
+        categories.push({title, id})
       }
     })
-    return items
+    return categories
   })
 }
 
@@ -34,13 +37,13 @@ const maxRoute = async(page: Page): Promise<number> => {
   return -1
 }
 
-const genRequests = (menus: Menu[]) => {
-  return menus.map((item) => {
+const genRequests = (categories: Partial<Category>[]) => {
+  return categories.map((item) => {
     return {
       label: TAG_MAX,
-      url: `${BASE_URL}/forum-${item.fid}.htm`,
+      url: `${BASE_URL}/forum-${item.id}.htm`,
       userData: {
-        fid: item.fid
+        id: item.id
       }
     }
   })
@@ -50,17 +53,17 @@ export default async function() {
   const inst = new PlaywrightCrawler({
     async requestHandler({ request, page }) {
       if (request.label === TAG_MENU) {
-        const list = await menuRoute(page)
-        await saveMenus(list)
+        const categories = await categoryRoute(page)
+        await categoryService.save(categories)
         await inst.addRequests(
-          genRequests(list)
+          genRequests(categories)
         )
       }
       if (request.label === TAG_MAX) {
-        const pages = await maxRoute(page)
-        if (pages != -1) {
-          const fid = request.userData.fid
-          await saveFlag({ fid, pages } as Flag)
+        const maxpage = await maxRoute(page)
+        if (maxpage != -1) {
+          const id = request.userData.id
+          await pageService.save(id, maxpage)
         }
       }
     }

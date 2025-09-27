@@ -1,19 +1,21 @@
 import { log } from 'crawlee'
 import { DataSource } from 'typeorm'
-import { Menu } from '../entities/menu.js'
+import { Category } from '../entities/category.js'
+import { Page } from '../entities/page.js'
 import { Flag } from '../entities/flag.js'
-import { Item } from '../entities/item.js'
-import { Detail } from '../entities/detail.js'
+import { Post } from '../entities/post.js'
+import { Image } from '../entities/image.js'
 
 const sqlite: DataSource = new DataSource({
   type: 'sqlite',
   synchronize: true,
   database: 'src/sqlite/dataset.sqlite',
   entities: [
-    Menu,
+    Category,
+    Page,
     Flag,
-    Item,
-    Detail
+    Post,
+    Image
   ]
 })
 

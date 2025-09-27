@@ -1,14 +1,18 @@
-import { Entity, Column } from 'typeorm'
-import Base from './base.js'
+import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm'
+import BaseEntity from './base.js'
+import { Category } from './category.js'
+import { Post } from './post.js'
 
-@Entity()
-export class Flag extends Base {
+/**
+ * 详情标记表
+ */
+@Entity('flag')
+export class Flag extends BaseEntity {
+  // 菜单id
   @Column({ type: 'varchar', length: 255, nullable: true })
-  fid!: string
+  cid?: string
 
-  @Column({ type: 'int', nullable: true })
-  page!: number
-
-  @Column({ type: 'int', nullable: true })
-  pages!: number
+  // 帖子id
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  pid?: string
 }

@@ -1,21 +1,28 @@
 import {
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  BaseEntity as TypeOrmBaseEntity
+  BaseEntity as TypeOrmBaseEntity,
+  PrimaryColumn,
 } from 'typeorm'
 
+/**
+ * 公共基类
+ */
 export default abstract class BaseEntity extends TypeOrmBaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id?: string
+  // 主键
+  @PrimaryColumn()
+  id!: string
 
-  @CreateDateColumn({ type: 'datetime' })
-  created!: Date
+  // 创建时间
+  @CreateDateColumn()
+  created?: Date
 
-  @UpdateDateColumn({ type: 'datetime' })
-  updated!: Date
+  // 更新时间
+  @UpdateDateColumn()
+  updated?: Date
 
-  @Column({ type: 'boolean', default: false })
-  visited!: boolean
+  // 标记状态
+  @Column({ default: false })
+  visited?: boolean
 }
