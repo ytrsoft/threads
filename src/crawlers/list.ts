@@ -2,20 +2,20 @@ import { Page } from 'playwright'
 import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL } from '../utils/index.js'
 import { PagerService } from '../service/pager_service.js'
-import { MakerService } from '../service/maker_service.js'
-import { TMaker } from '../entities/maker.js'
+import { MarkerService } from '../service/maker_service.js'
+import { TMaker } from '../entities/marker.js'
 
 const pagerService = new PagerService()
-const makerService = new MakerService()
+const markerService = new MarkerService()
 
 const itemRoute = async(cid: string, page: Page): Promise<TMaker[]> => {
-  return await page.$$eval('.list-unstyled.threadlist li', (list) => {
-    const items: TMaker[] = []
-    list.forEach((li) => {
-      const pid = li.getAttribute('data-tid') as string
-      items.push({ cid, pid })
+  const pids = await page.$$eval('.list-unstyled.threadlist li', (list) => {
+    return list.map((li) => {
+      return li.getAttribute('data-tid') as string
     })
-    return items
+  })
+  return pids.map((pid) => {
+    return { cid, pid }
   })
 }
 
@@ -23,10 +23,10 @@ export default async function() {
   const inst = new PlaywrightCrawler({
     async requestHandler({ request, page }) {
       const { pager } = request.userData.entity
-      const flags = await itemRoute(
+      const marks = await itemRoute(
         pager.cid, page
       )
-      makerService.save(flags)
+      markerService.save(marks)
       pagerService.visited(pager)
     }
   })

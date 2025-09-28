@@ -4,8 +4,8 @@ import BaseEntity from './base.js'
 /**
  * 标记表
  */
-@Entity('maker')
-export class Maker extends BaseEntity {
+@Entity('marker')
+export class Marker extends BaseEntity {
   // 菜单id
   @Column({ type: 'varchar', length: 255, nullable: true })
   cid!: string

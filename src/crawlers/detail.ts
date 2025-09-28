@@ -3,15 +3,15 @@ import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL } from '../utils/index.js'
 
 import { PostService } from '../service/post_service.js'
-import { MakerService } from '../service/maker_service.js'
+import { MarkerService } from '../service/maker_service.js'
 import { ImageService } from '../service/image_service.js'
-import { Maker } from '../entities/maker.js'
+import { Marker } from '../entities/marker.js'
 import { Post } from '../entities/post.js'
 import { Image } from '../entities/image.js'
 import { Entity } from '../service/base_service.js'
 
 const postService = new PostService()
-const flagService = new MakerService()
+const markService = new MarkerService()
 const imageService = new ImageService()
 
 interface Detail {
@@ -72,18 +72,19 @@ const detailRoute = async(marker: Maker, page: Page): Promise<Detail> => {
 export default async function() {
   const inst = new PlaywrightCrawler({
     async requestHandler({ request, page }) {
-      const entity = request.userData.entity
+      const { marker } = request.userData.entity
       const { images, post } = await detailRoute(
-        entity.flag, page
+        marker, page
       )
       postService.save(post)
       imageService.save(images)
+      markService.visited(marker)
     }
   })
 
-  const makers = await flagService.queries()
+  const markers = await markService.queries()
 
-  const requests = makers.map((marker) => {
+  const requests = markers.map((marker) => {
     return {
       userData: {
         entity: {

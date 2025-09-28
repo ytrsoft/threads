@@ -2,7 +2,7 @@ import { log } from 'crawlee'
 import { DataSource } from 'typeorm'
 import { Category } from '../entities/category.js'
 import { Pager } from '../entities/pager.js'
-import { Maker } from '../entities/maker.js'
+import { Marker } from '../entities/marker.js'
 import { Post } from '../entities/post.js'
 import { Image } from '../entities/image.js'
 
@@ -13,7 +13,7 @@ const sqlite: DataSource = new DataSource({
   entities: [
     Category,
     Pager,
-    Maker,
+    Marker,
     Post,
     Image
   ]
