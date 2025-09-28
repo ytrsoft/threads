@@ -15,4 +15,4 @@ export class Marker extends BaseEntity {
   pid!: string
 }
 
-export type TMaker = Partial<Maker>
+export type TMaker = Partial<Marker>

@@ -19,7 +19,7 @@ interface Detail {
   post: Entity<Post>
 }
 
-const detailRoute = async(marker: Maker, page: Page): Promise<Detail> => {
+const detailRoute = async(marker: Marker, page: Page): Promise<Detail> => {
   const title = await page.$eval(
     '.card-thread .media-body h4',
     el => el.textContent?.trim() || ''
@@ -45,9 +45,8 @@ const detailRoute = async(marker: Maker, page: Page): Promise<Detail> => {
       return data
     }
   ).catch(() => Array(8).fill(''))
-  const images = imgs.map((src, index) => {
+  const images = imgs.map((src) => {
     return {
-      id: String(index + 1),
       src,
       pid: marker.pid
     }
