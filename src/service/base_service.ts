@@ -4,8 +4,9 @@ import BaseEntity from '../entities/base.js'
 import sqlite from '../sqlite/index.js'
 import { Repository, EntityTarget, DeepPartial, FindManyOptions } from 'typeorm'
 
-export type Entity<T> = DeepPartial<T> | Array<DeepPartial<T>>
+export type SingleEntity<T> = DeepPartial<T>
 export type ArrayEntity<T> = Array<DeepPartial<T>>
+export type Entity<T> = SingleEntity<T> | ArrayEntity<T>
 
 export abstract class BaseService<T extends BaseEntity> {
 

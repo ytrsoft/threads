@@ -63,7 +63,8 @@ export default async function() {
         const maxpage = await maxRoute(page)
         if (maxpage != -1) {
           const id = request.userData.id
-          await pagerService.save({
+          await pagerService.gen({
+            page: 1,
             cid: id,
             pages: maxpage
           })

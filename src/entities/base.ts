@@ -11,18 +11,18 @@ import {
  */
 export default abstract class BaseEntity extends TypeOrmBaseEntity {
   // 主键
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id!: string
 
   // 创建时间
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime' })
   created!: Date
 
   // 更新时间
-  @UpdateDateColumn()
+  @CreateDateColumn({ type: 'datetime' })
   updated!: Date
 
   // 标记状态
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   visited!: boolean
 }
