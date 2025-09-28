@@ -1,16 +1,16 @@
 import { Page } from 'playwright'
 import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL } from '../utils/index.js'
-import { PageService } from '../service/page_service.js'
-import { FlagService } from '../service/flag_service.js'
-import { Flag } from '../entities/flag.js'
+import { PagerService } from '../service/pager_service.js'
+import { MakerService } from '../service/maker_service.js'
+import { TMaker } from '../entities/maker.js'
 
-const pageService = new PageService()
-const flagService = new FlagService()
+const pagerService = new PagerService()
+const makerService = new MakerService()
 
-const itemRoute = async(cid: string, page: Page): Promise<Partial<Flag>[]> => {
+const itemRoute = async(cid: string, page: Page): Promise<TMaker[]> => {
   return await page.$$eval('.list-unstyled.threadlist li', (list) => {
-    const items: Partial<Flag>[] = []
+    const items: TMaker[] = []
     list.forEach((li) => {
       const pid = li.getAttribute('data-tid') as string
       items.push({ cid, pid })
@@ -22,25 +22,25 @@ const itemRoute = async(cid: string, page: Page): Promise<Partial<Flag>[]> => {
 export default async function() {
   const inst = new PlaywrightCrawler({
     async requestHandler({ request, page }) {
-      const entity = request.userData.entity
+      const { pager } = request.userData.entity
       const flags = await itemRoute(
-        entity.page.cid, page
+        pager.cid, page
       )
-      flagService.save(flags)
-      pageService.visited(entity.page)
+      makerService.save(flags)
+      pagerService.visited(pager)
     }
   })
 
-  const pages = await pageService.query()
+  const pages = await pagerService.queries()
 
-  const requests = pages.map((page) => {
+  const requests = pages.map((pager) => {
     return {
       userData: {
         entity: {
-          page
+          pager
         }
       },
-      url: `${BASE_URL}/forum-${page.cid}-${page.page}.htm?orderby=lastpid&digest=0`
+      url: `${BASE_URL}/forum-${pager.cid}-${pager.page}.htm?orderby=lastpid&digest=0`
     }
   })
 

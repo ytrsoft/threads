@@ -1,8 +1,8 @@
 import { log } from 'crawlee'
 import { DataSource } from 'typeorm'
 import { Category } from '../entities/category.js'
-import { Page } from '../entities/page.js'
-import { Flag } from '../entities/flag.js'
+import { Pager } from '../entities/pager.js'
+import { Maker } from '../entities/maker.js'
 import { Post } from '../entities/post.js'
 import { Image } from '../entities/image.js'
 
@@ -12,8 +12,8 @@ const sqlite: DataSource = new DataSource({
   database: 'src/sqlite/dataset.sqlite',
   entities: [
     Category,
-    Page,
-    Flag,
+    Pager,
+    Maker,
     Post,
     Image
   ]

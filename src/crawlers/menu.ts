@@ -2,15 +2,15 @@ import { Page } from 'playwright'
 import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL, TAG_MENU, TAG_MAX } from '../utils/index.js'
 import { CategoryService } from '../service/category_service.js'
-import { PageService } from '../service/page_service.js'
-import { Category } from '../entities/category.js'
+import { PagerService } from '../service/pager_service.js'
+import { Category, TCategory } from '../entities/category.js'
 
 const categoryService = new CategoryService()
-const pageService = new PageService()
+const pagerService = new PagerService()
 
-const categoryRoute = async(page: Page): Promise<Partial<Category>[]> => {
+const categoryRoute = async(page: Page): Promise<TCategory[]> => {
   return await page.$$eval('.forumList li', (list) => {
-    const categories: Partial<Category>[] = []
+    const categories: TCategory[] = []
     list.forEach((li) => {
       const title = li.textContent.replace(/\s+/g, '')
       const id = li.getAttribute('fid') as string
@@ -37,7 +37,7 @@ const maxRoute = async(page: Page): Promise<number> => {
   return -1
 }
 
-const genRequests = (categories: Partial<Category>[]) => {
+const genRequests = (categories: TCategory[]) => {
   return categories.map((item) => {
     return {
       label: TAG_MAX,
@@ -63,7 +63,10 @@ export default async function() {
         const maxpage = await maxRoute(page)
         if (maxpage != -1) {
           const id = request.userData.id
-          await pageService.save(id, maxpage)
+          await pagerService.save({
+            cid: id,
+            pages: maxpage
+          })
         }
       }
     }

@@ -8,5 +8,7 @@ import BaseEntity from './base.js'
 export class Category extends BaseEntity {
   // 菜单名称
   @Column({ type: 'varchar', length: 255, nullable: true })
-  title?: string
+  title!: string
 }
+
+export type TCategory = Partial<Category>

@@ -16,13 +16,13 @@ export default abstract class BaseEntity extends TypeOrmBaseEntity {
 
   // 创建时间
   @CreateDateColumn()
-  created?: Date
+  created!: Date
 
   // 更新时间
   @UpdateDateColumn()
-  updated?: Date
+  updated!: Date
 
   // 标记状态
   @Column({ default: false })
-  visited?: boolean
+  visited!: boolean
 }

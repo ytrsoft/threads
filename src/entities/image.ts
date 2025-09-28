@@ -8,9 +8,11 @@ import BaseEntity from './base.js'
 export class Image extends BaseEntity {
   // 图片路径
   @Column({ type: 'varchar', length: 255, nullable: true })
-  src?: string
+  src!: string
 
   // 帖子id
   @Column({ type: 'varchar', length: 255, nullable: true })
-  pid?: string
+  pid!: string
 }
+
+export type TImage = Partial<Image>

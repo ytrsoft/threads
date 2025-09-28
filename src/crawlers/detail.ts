@@ -3,16 +3,23 @@ import { PlaywrightCrawler } from 'crawlee'
 import { BASE_URL } from '../utils/index.js'
 
 import { PostService } from '../service/post_service.js'
-import { FlagService } from '../service/flag_service.js'
+import { MakerService } from '../service/maker_service.js'
 import { ImageService } from '../service/image_service.js'
-import { Flag } from '../entities/flag.js'
+import { Maker } from '../entities/maker.js'
 import { Post } from '../entities/post.js'
+import { Image } from '../entities/image.js'
+import { Entity } from '../service/base_service.js'
 
 const postService = new PostService()
-const flagService = new FlagService()
+const flagService = new MakerService()
 const imageService = new ImageService()
 
-const detailRoute = async(flag: Flag, page: Page): Promise<any> => {
+interface Detail {
+  images: Entity<Image>,
+  post: Entity<Post>
+}
+
+const detailRoute = async(marker: Maker, page: Page): Promise<Detail> => {
   const title = await page.$eval(
     '.card-thread .media-body h4',
     el => el.textContent?.trim() || ''
@@ -42,14 +49,14 @@ const detailRoute = async(flag: Flag, page: Page): Promise<any> => {
     return {
       id: String(index + 1),
       src,
-      pid: flag.pid
+      pid: marker.pid
     }
   })
   const post = {
     title,
     desc,
-    id: flag.pid,
-    cid: flag.cid,
+    id: marker.pid,
+    cid: marker.cid,
     region: cells[0],
     age: cells[1],
     score: cells[2],
@@ -69,21 +76,21 @@ export default async function() {
       const { images, post } = await detailRoute(
         entity.flag, page
       )
-      postService.save(post as Post)
+      postService.save(post)
       imageService.save(images)
     }
   })
 
-  const flags = await flagService.query()
+  const makers = await flagService.queries()
 
-  const requests = flags.map((flag) => {
+  const requests = makers.map((marker) => {
     return {
       userData: {
         entity: {
-          flag
+          marker
         }
       },
-      url: `${BASE_URL}/thread-${flag.pid}.htm`
+      url: `${BASE_URL}/thread-${marker.pid}.htm`
     }
   })
 
