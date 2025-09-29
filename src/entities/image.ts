@@ -11,7 +11,7 @@ export class Image extends BaseEntity {
   src!: string
 
   // 帖子id
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   pid!: string
 }
 

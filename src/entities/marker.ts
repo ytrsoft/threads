@@ -7,11 +7,11 @@ import BaseEntity from './base.js'
 @Entity('marker')
 export class Marker extends BaseEntity {
   // 菜单id
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   cid!: string
 
   // 帖子id
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   pid!: string
 }
 

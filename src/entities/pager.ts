@@ -8,7 +8,7 @@ import BaseEntity from './base.js'
 export class Pager extends BaseEntity {
 
   // 菜单id
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   cid!: string
 
   // 页码

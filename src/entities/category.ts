@@ -7,7 +7,7 @@ import BaseEntity from './base.js'
 @Entity('category')
 export class Category extends BaseEntity {
   // 菜单名称
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   title!: string
 }
 
