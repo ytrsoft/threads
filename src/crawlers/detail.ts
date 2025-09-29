@@ -81,7 +81,7 @@ export default async function() {
     }
   })
 
-  const markers = await markService.queries()
+  const markers = await markService.queryForList()
 
   const requests = markers.map((marker) => {
     return {

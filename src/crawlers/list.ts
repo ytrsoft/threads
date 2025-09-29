@@ -31,7 +31,7 @@ export default async function() {
     }
   })
 
-  const pages = await pagerService.queries()
+  const pages = await pagerService.queryForList()
 
   const requests = pages.map((pager) => {
     return {
