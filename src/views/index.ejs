@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源分享</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #f59e0b; --bg: #000000; --card: #0a0a0a; --border: #1a1a1a; }
+        body { background-color: var(--bg); color: #e5e5e5; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .fixed-header { position: fixed; top: 0; left: 0; width: 100%; z-index: 50; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+
+        .menu-item { transition: all 0.2s; position: relative; white-space: nowrap; user-select: none; }
+        .menu-item.active { color: #000; background: var(--accent); border-color: var(--accent); font-weight: 700; }
+        .menu-item:hover:not(.active) { color: #fff; border-color: #555; }
+
+        .card { background: var(--card); border: 1px solid var(--border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card:hover { transform: translateY(-4px); border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.7); }
+
+        .err-mask { display: flex; align-items: center; justify-content: center; background: #050505; position: absolute; inset: 0; z-index: 10; }
+
+        .scroll-btn { position: absolute; top: 0; height: 100%; width: 40px; z-index: 20; display: flex; align-items: center; justify-content: center; color: #666; transition: color 0.2s; background: var(--bg); border: none; cursor: pointer; }
+        .scroll-btn:hover { color: var(--accent); }
+        .scroll-btn.left { left: 0; border-right: 1px solid var(--border); }
+        .scroll-btn.right { right: 0; border-left: 1px solid var(--border); }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    </style>
+    <script>
+        function handleImgError(img) {
+            img.style.display = 'none';
+            img.nextElementSibling.style.display = 'flex';
+        }
+        function scrollMenu(offset) {
+            const container = document.getElementById('menu-track');
+            container.scrollBy({ left: offset, behavior: 'smooth' });
+        }
+    </script>
+</head>
+<body class="min-h-screen">
+
+    <header class="fixed-header">
+        <div class="h-16 border-b border-[#1a1a1a]">
+            <div class="max-w-[1400px] mx-auto px-4 h-full flex items-center justify-between">
+                <div class="flex items-center gap-3 select-none">
+                    <div class="flex gap-0.5">
+                        <div class="w-1.5 h-5 bg-amber-500 transform -skew-x-12"></div>
+                        <div class="w-1.5 h-5 bg-white/20 transform -skew-x-12"></div>
+                        <div class="w-1.5 h-5 bg-white/5 transform -skew-x-12"></div>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-base font-bold text-white tracking-wider leading-none">资源分享</span>
+                        <span class="text-[9px] font-mono text-amber-600 tracking-[0.3em] leading-none mt-1">RESOURCE</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="hidden md:flex items-center gap-4 text-xs font-mono select-none">
+                        <%
+                            const buildSortUrl = (field) => {
+                                let newOrder = 'DESC';
+                                if (sortBy === field && order === 'DESC') newOrder = 'ASC';
+                                return `/?mid=${currentMid || ''}&kw=${kw}&sortBy=${field}&order=${newOrder}`;
+                            }
+                        %>
+
+                        <a href="<%= buildSortUrl('price') %>"
+                           class="flex items-center gap-1 cursor-pointer transition-colors <%= sortBy === 'price' ? 'text-amber-500 font-bold' : 'text-gray-500 hover:text-gray-300' %>">
+                            <span>价格</span>
+                            <div class="flex flex-col -space-y-1">
+                                <svg class="w-2 h-2 <%= sortBy === 'price' && order === 'ASC' ? 'text-amber-500' : 'text-gray-700' %>" viewBox="0 0 10 10" fill="currentColor"><path d="M5 2L1 8h8L5 2z"/></svg>
+                                <svg class="w-2 h-2 <%= sortBy === 'price' && order === 'DESC' ? 'text-amber-500' : 'text-gray-700' %>" viewBox="0 0 10 10" fill="currentColor"><path d="M5 8L1 2h8L5 8z"/></svg>
+                            </div>
+                        </a>
+
+                        <a href="<%= buildSortUrl('age') %>"
+                           class="flex items-center gap-1 cursor-pointer transition-colors <%= sortBy === 'age' ? 'text-amber-500 font-bold' : 'text-gray-500 hover:text-gray-300' %>">
+                            <span>年龄</span>
+                            <div class="flex flex-col -space-y-1">
+                                <svg class="w-2 h-2 <%= sortBy === 'age' && order === 'ASC' ? 'text-amber-500' : 'text-gray-700' %>" viewBox="0 0 10 10" fill="currentColor"><path d="M5 2L1 8h8L5 2z"/></svg>
+                                <svg class="w-2 h-2 <%= sortBy === 'age' && order === 'DESC' ? 'text-amber-500' : 'text-gray-700' %>" viewBox="0 0 10 10" fill="currentColor"><path d="M5 8L1 2h8L5 8z"/></svg>
+                            </div>
+                        </a>
+                    </div>
+
+                    <form action="/" method="GET" class="hidden md:flex relative w-72 group">
+                        <input type="hidden" name="mid" value="<%= currentMid %>">
+                        <input type="hidden" name="sortBy" value="<%= sortBy %>">
+                        <input type="hidden" name="order" value="<%= order %>">
+                        <input type="text" name="kw" value="<%= kw %>" placeholder="请输入关键字"
+                               class="w-full bg-[#0a0a0a] border border-[#222] text-xs text-gray-300 rounded-sm py-2 pl-4 pr-10 focus:outline-none focus:border-amber-500/50 transition-all placeholder-gray-700 font-mono focus:bg-[#0f0f0f]">
+                        <button type="submit" class="absolute right-0 top-0 h-full px-3 text-gray-600 hover:text-amber-500 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-12 relative">
+            <div class="max-w-[1400px] mx-auto px-0 md:px-4 h-full relative group">
+
+                <button onclick="scrollMenu(-300)" class="scroll-btn left hidden md:flex">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+
+                <div id="menu-track" class="h-full flex items-center gap-2 overflow-x-auto hide-scroll px-4 md:px-12 scroll-smooth">
+                    <a href="/" class="menu-item flex-shrink-0 px-6 py-1.5 rounded-sm text-xs border border-[#222] text-gray-500 <%= !currentMid ? 'active' : '' %>">
+                        全部
+                    </a>
+                    <% menus.forEach(function(menu) { %>
+                        <a href="/?mid=<%= menu.id %>" class="menu-item flex-shrink-0 px-6 py-1.5 rounded-sm text-xs border border-[#222] text-gray-500 <%= currentMid === menu.id ? 'active' : '' %>">
+                            <%= menu.name %>
+                        </a>
+                    <% }); %>
+                    <div class="w-2 flex-shrink-0"></div>
+                </div>
+
+                <button onclick="scrollMenu(300)" class="scroll-btn right hidden md:flex">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-20 px-4 max-w-[1400px] mx-auto">
+        <% if (posts.length === 0) { %>
+            <div class="h-[60vh] flex flex-col items-center justify-center opacity-30">
+                <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                <p class="text-xs font-mono tracking-[0.2em] text-gray-500">暂无数据</p>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <% posts.forEach(function(post) { %>
+                    <a href="/thread/<%= post.id %>" class="card group block rounded overflow-hidden relative">
+                        <div class="aspect-[16/10] bg-[#050505] relative w-full overflow-hidden border-b border-[#1a1a1a]">
+                            <% if (post.cover) { %>
+                                <img src="<%= post.cover %>" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                                     onerror="handleImgError(this)" loading="lazy">
+                                <div class="err-mask" style="display: none;">
+                                    <span class="text-[9px] font-mono text-gray-700 tracking-widest">图片错误</span>
+                                </div>
+                            <% } else { %>
+                                <div class="err-mask">
+                                    <span class="text-[9px] font-mono text-gray-700 tracking-widest">图片错误</span>
+                                </div>
+                            <% } %>
+
+                            <% if (post.region) { %>
+                                <div class="absolute top-2 left-2">
+                                    <span class="bg-black/80 backdrop-blur text-amber-500 text-[10px] font-bold px-2 py-0.5 border border-amber-900/30 rounded-sm shadow-lg">
+                                        <%= post.region %>
+                                    </span>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <div class="p-4">
+                            <h3 class="text-sm font-bold text-gray-300 leading-snug mb-3 line-clamp-2 group-hover:text-white transition-colors h-10">
+                                <%= post.title %>
+                            </h3>
+                            <div class="flex items-center justify-between pt-3 border-t border-[#1a1a1a]">
+                                <span class="text-[10px] font-mono text-gray-600"><%= new Date(post.updatedAt).toLocaleDateString() %></span>
+                                <span class="text-sm font-mono font-bold text-amber-500">
+                                    <%= (post.price && post.price !== '0') ? '¥'+post.price : '' %>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                <% }); %>
+            </div>
+
+            <div class="mt-16 flex justify-center gap-2">
+                <% if (pagination.page > 1) { %>
+                    <a href="/?mid=<%= currentMid %>&kw=<%= kw %>&sortBy=<%= sortBy %>&order=<%= order %>&page=<%= pagination.page - 1 %>" class="px-4 py-2 bg-[#0a0a0a] border border-[#222] text-gray-400 text-xs font-mono hover:border-amber-500 hover:text-amber-500 transition-colors">上一页</a>
+                <% } %>
+                <span class="px-4 py-2 bg-amber-600 text-black text-xs font-mono font-bold border border-amber-600"><%= pagination.page %></span>
+                <% if (pagination.page < pagination.totalPage) { %>
+                    <a href="/?mid=<%= currentMid %>&kw=<%= kw %>&sortBy=<%= sortBy %>&order=<%= order %>&page=<%= pagination.page + 1 %>" class="px-4 py-2 bg-[#0a0a0a] border border-[#222] text-gray-400 text-xs font-mono hover:border-amber-500 hover:text-amber-500 transition-colors">下一页</a>
+                <% } %>
+            </div>
+        <% } %>
+    </main>
+</body>
+</html>
