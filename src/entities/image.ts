@@ -1,18 +1,15 @@
-import { Column, Entity } from 'typeorm'
-import BaseEntity from './base.js'
+import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm'
+import BaseEntity from './BaseEntity.js'
 
-/**
- * 图片表
- */
-@Entity('image')
+@Entity()
 export class Image extends BaseEntity {
-  // 图片路径
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
   src!: string
 
-  // 帖子id
-  @Column({ type: 'varchar', length: 36, nullable: true })
+  @Column({ type: 'varchar', length: 36 })
+  @Index()
   pid!: string
 }
-
-export type TImage = Partial<Image>
