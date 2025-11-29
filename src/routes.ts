@@ -58,11 +58,12 @@ router.addHandler(LABEL_LIST, async ({ $, request, crawler, log }) => {
   const match = request.url.match(/forum-\d+-(\d+)\.htm/)
 
   if (match) {
-    const page = parseInt(match[1], 10)
-    const nextPageUrl = `${BASE_URL}/forum-${mid}-${page + 1}.htm`
+    const currentPage = parseInt(match[1], 10)
+    const nextPageUrl = `${BASE_URL}/forum-${mid}-${currentPage + 1}.htm`
 
-    const hasNext = $('.pagination .page-item:last-child').text().includes('▶') ||
-                    ($('.pagination').length > 0 && $('.pagination .next').length > 0)
+    const hasNext = $('.pagination .page-item a').filter((_, el) => {
+      return $(el).text().trim() === '▶'
+    }).length > 0
 
     if (hasNext) {
       await crawler.addRequests([{
